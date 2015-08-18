@@ -3,13 +3,13 @@
 [![][build-img]][build]
 [![][nuget-img]][nuget]
 
+Issues tests commands to SMTP, RDBMS and Redis servers.
+
 [build]:     https://ci.appveyor.com/project/TallesL/ConnectionTester
 [build-img]: https://ci.appveyor.com/api/projects/status/github/tallesl/ConnectionTester
 
 [nuget]:     http://badge.fury.io/nu/ConnectionTester
 [nuget-img]: https://badge.fury.io/nu/ConnectionTester.png
-
-Issues tests commands to SMTP, RDBMS and Redis servers.
 
 ## SMTP
 
