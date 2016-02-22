@@ -37,7 +37,7 @@
             if (cfg == null)
                 throw new ConfigurationErrorsException("There's not SMTP configuration in .config!");
             else
-                return Smtp(cfg.Network.Host, cfg.Network.Port);
+                return Smtp(new ConnectedSocket(cfg.Network.Host, cfg.Network.Port));
         }
 
         /// <summary>
@@ -45,8 +45,12 @@
         /// </summary>
         /// <param name="endpoint">SMTP endpoint</param>
         /// <returns>True if the SMTP server responded with success, false otherwise.</returns>
+        /// <exception cref="ArgumentNullException">If the given endpoint is null</exception>
         public static bool Smtp(EndPoint endpoint)
         {
+            if (endpoint == null)
+                throw new ArgumentNullException("endpoint");
+
             return Smtp(new ConnectedSocket(endpoint));
         }
 
@@ -56,8 +60,12 @@
         /// <param name="host">SMTP server host</param>
         /// <param name="port">SMTP server port</param>
         /// <returns>True if the SMTP server responded with success, false otherwise.</returns>
+        /// <exception cref="ArgumentNullException">If the given host is null</exception>
         public static bool Smtp(string host, int port)
         {
+            if (host == null)
+                throw new ArgumentNullException("host");
+
             return Smtp(new ConnectedSocket(host, port));
         }
 

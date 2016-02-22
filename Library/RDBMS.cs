@@ -1,5 +1,6 @@
 ﻿namespace ConnectedLibrary
 {
+    using ConnectionStringLibrary;
     using QueryLibrary;
     using System;
     using System.Configuration;

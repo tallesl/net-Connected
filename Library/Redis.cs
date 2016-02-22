@@ -1,11 +1,14 @@
 ﻿namespace ConnectedLibrary
 {
     using SocketLibrary;
+    using System;
     using System.Net;
     using System.Net.Sockets;
 
     public static partial class Connected
     {
+        private const int _redisDefaultPort = 6379;
+
         private const string _redisLineTerminator = "\r\n";
 
         /// <summary>
@@ -15,7 +18,7 @@
         /// <returns>True if the Redis server responded with success, false otherwise.</returns>
         public static bool Redis()
         {
-            return Redis("localhost", 6379);
+            return Redis("localhost", _redisDefaultPort);
         }
 
         /// <summary>
@@ -24,9 +27,13 @@
         /// </summary>
         /// <param name="auth">Redis password</param>
         /// <returns>True if the Redis server responded with success, false otherwise.</returns>
+        /// <exception cref="ArgumentNullException">If the given auth is null</exception>
         public static bool Redis(string auth)
         {
-            return Redis("localhost", 6379, auth);
+            if (auth == null)
+                throw new ArgumentNullException("auth");
+
+            return Redis(new ConnectedSocket("localhost", _redisDefaultPort), auth);
         }
 
         /// <summary>
@@ -34,9 +41,13 @@
         /// </summary>
         /// <param name="endpoint">Redis endpoint</param>
         /// <returns>True if the Redis server responded with success, false otherwise.</returns>
+        /// <exception cref="ArgumentNullException">If the given endpoint is null</exception>
         public static bool Redis(EndPoint endpoint)
         {
-            return Redis(endpoint, null);
+            if (endpoint == null)
+                throw new ArgumentNullException("endpoint");
+
+            return Redis(new ConnectedSocket(endpoint), null);
         }
 
         /// <summary>
@@ -45,9 +56,13 @@
         /// <param name="host">Redis server host</param>
         /// <param name="port">Redis server port</param>
         /// <returns>True if the Redis server responded with success, false otherwise.</returns>
+        /// <exception cref="ArgumentNullException">If the given host is null</exception>
         public static bool Redis(string host, int port)
         {
-            return Redis(host, port, null);
+            if (host == null)
+                throw new ArgumentNullException("host");
+
+            return Redis(new ConnectedSocket(host, port), null);
         }
 
         /// <summary>
@@ -56,8 +71,15 @@
         /// <param name="endpoint">Redis endpoint</param>
         /// <param name="auth">Redis password</param>
         /// <returns>True if the Redis server responded with success, false otherwise.</returns>
+        /// <exception cref="ArgumentNullException">If the given endpoint or auth is null</exception>
         public static bool Redis(EndPoint endpoint, string auth)
         {
+            if (endpoint == null)
+                throw new ArgumentNullException("endpoint");
+
+            if (auth == null)
+                throw new ArgumentNullException("auth");
+
             return Redis(new ConnectedSocket(endpoint), auth);
         }
 
@@ -68,8 +90,15 @@
         /// <param name="port">Redis server port</param>
         /// <param name="auth">Redis password</param>
         /// <returns>True if the Redis server responded with success, false otherwise.</returns>
+        /// <exception cref="ArgumentNullException">If the given host or auth is null</exception>
         public static bool Redis(string host, int port, string auth)
         {
+            if (host == null)
+                throw new ArgumentNullException("host");
+
+            if (auth == null)
+                throw new ArgumentNullException("auth");
+
             return Redis(new ConnectedSocket(host, port), auth);
         }
 
