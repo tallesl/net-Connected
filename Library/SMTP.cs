@@ -11,86 +11,84 @@
 
     public static partial class Connected
     {
+        private const string _smtpLineTerminator = "\r\n";
+
+        private static readonly int[] _smtpValidReplyCodes = {
+            // Non standard for "success"
+            200,
+
+            // Service ready
+            220,
+
+            // Requested mail action okay, completed
+            250
+        };
+
+        /// <summary>
+        /// Issues a HELO to a SMTP server thus testing its connection.
+        /// Reads the SMTP server settings (host and port) from &lt;smtp&gt; in config.
+        /// </summary>
+        /// <returns>True if the SMTP server responded with success, false otherwise.</returns>
+        /// <exception cref="ConfigurationErrorsException">If there's no SMTP settings in .config</exception>
+        public static bool Smtp()
+        {
+            var cfg = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
+
+            if (cfg == null)
+                throw new ConfigurationErrorsException("There's not SMTP configuration in .config!");
+            else
+                return Smtp(cfg.Network.Host, cfg.Network.Port);
+        }
+
         /// <summary>
         /// Issues a HELO to a SMTP server thus testing its connection.
         /// </summary>
-        public static class SMTP
+        /// <param name="host">SMTP server host</param>
+        /// <param name="port">SMTP server port</param>
+        /// <returns>True if the SMTP server responded with success, false otherwise.</returns>
+        public static bool Smtp(string host, int port)
         {
-            private const string _lineTerminator = "\r\n";
-
-            private static readonly int[] _validReplyCodes = {
-                // Non standard for "success"
-                200,
-
-                // Service ready
-                220,
-
-                // Requested mail action okay, completed
-                250
-            };
-
-            /// <summary>
-            /// Returns true if the SMTP server responded with success, false otherwise.
-            /// Reads the SMTP server settings (host and port) from &lt;smtp&gt; in config.
-            /// </summary>
-            /// <returns>True if the SMTP server responded with success, false otherwise.</returns>
-            /// <exception cref="ConfigurationErrorsException">If there's no SMTP settings in .config</exception>
-            public static bool IsOk()
+            try
             {
-                var cfg = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
-                if (cfg == null) throw new ConfigurationErrorsException("There's not SMTP configuration in .config!");
-                return IsOk(cfg.Network.Host, cfg.Network.Port);
-            }
-
-            /// <summary>
-            /// Returns true if the SMTP server responded with success, false otherwise.
-            /// </summary>
-            /// <param name="host">SMTP server host</param>
-            /// <param name="port">SMTP server port</param>
-            /// <returns>True if the SMTP server responded with success, false otherwise.</returns>
-            public static bool IsOk(string host, int port)
-            {
-                try
+                using (var socket = new ConnectedSocket(host, port))
                 {
-                    using (var socket = new ConnectedSocket(host, port))
-                    {
-                        // getting local hostname
-                        var localhost = Dns.GetHostName();
+                    // getting local hostname
+                    var localhost = Dns.GetHostName();
 
-                        // formatting HELO
-                        var data = string.Format("HELO {0}{1}", localhost, _lineTerminator);
+                    // formatting HELO
+                    var data = string.Format("HELO {0}{1}", localhost, _smtpLineTerminator);
 
-                        // fire in the hole!
-                        socket.Send(data);
+                    // fire in the hole!
+                    socket.Send(data);
 
-                        // getting an answer
-                        var received = socket.Receive();
+                    // getting an answer
+                    var received = socket.Receive();
 
-                        // sanitizing
-                        var answers = SanitizeAnswer(received);
+                    // sanitizing
+                    var answers = SanitizeSmtpAnswer(received);
 
-                        // checking answer's reply codes and returning it
-                        return answers.Any(a => ValidReplyCode(a, localhost));
-                    }
-                }
-                catch (SocketException)
-                {
-                    // something bad happened
-                    return false;
+                    // checking answer's reply codes and returning it
+                    return answers.Any(a => ValidSmtpReplyCode(a, localhost));
                 }
             }
-
-            private static IEnumerable<string> SanitizeAnswer(string answer)
+            catch (SocketException)
             {
-                var lines = answer.Split(new [] { _lineTerminator }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var line in lines) yield return line.Trim().ToLower();
+                // something bad happened
+                return false;
             }
+        }
 
-            private static bool ValidReplyCode(string answer, string hostname)
-            {
-                var answerCode = answer.Split(new[] { ' ' }).First();
-                return _validReplyCodes.Any(validCode => validCode.ToString() == answerCode);
-            }
+        private static IEnumerable<string> SanitizeSmtpAnswer(string answer)
+        {
+            return answer
+                .Split(new [] { _smtpLineTerminator }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(l => l.Trim().ToLower());
+        }
+
+        private static bool ValidSmtpReplyCode(string answer, string hostname)
+        {
+            var answerCode = answer.Split(new[] { ' ' }).First();
+            return _smtpValidReplyCodes.Any(validCode => validCode.ToString() == answerCode);
         }
     }
 }

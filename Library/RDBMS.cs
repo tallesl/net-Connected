@@ -13,47 +13,43 @@
         /// <summary>
         /// Issues a SELECT 1 to a RDBMS server thus testing its connection.
         /// </summary>
-        public static class RDBMS
+        /// <param name="connectionStringName">Name of the connection string to use</param>
+        /// <returns>True if the RDBMS server responded with success, false otherwise</returns>
+        /// <exception cref="ArgumentNullException">If connectionStringName is null</exception>
+        /// <exception cref="NoSuchConnectionStringException">
+        /// A connection string with the provided name doesn't exist
+        /// </exception>
+        /// <exception cref="EmptyConnectionStringException">An empty connection string is found</exception>
+        /// <exception cref="EmptyProviderNameException">An empty provider name is found</exception>
+        public static bool Rdbms(string connectionStringName)
         {
-            /// <summary>
-            /// Returns true if the RDBMS server responded with success, false otherwise.
-            /// </summary>
-            /// <param name="connectionStringName">Name of the connection string to use</param>
-            /// <returns>True if the RDBMS server responded with success, false otherwise</returns>
-            /// <exception cref="ArgumentNullException">If connectionStringName is null</exception>
-            /// <exception cref="NoSuchConnectionStringException">
-            /// A connection string with the provided name doesn't exist
-            /// </exception>
-            /// <exception cref="EmptyConnectionStringException">An empty connection string is found</exception>
-            /// <exception cref="EmptyProviderNameException">An empty provider name is found</exception>
-            public static bool IsOk(string connectionStringName)
+            try
             {
-                return IsOk(new QuickQuery(connectionStringName));
+                return new QuickQuery(connectionStringName).SelectSingle<int>("SELECT 1") == 1;
             }
-
-            /// <summary>
-            /// Returns true if the RDBMS server responded with success, false otherwise.
-            /// </summary>
-            /// <param name="connectionString">Connection string to use</param>
-            /// <returns>True if the RDBMS server responded with success, false otherwise</returns>
-            /// <exception cref="ArgumentNullException">If connectionStringName is null</exception>
-            /// <exception cref="EmptyConnectionStringException">An empty connection string is found</exception>
-            /// <exception cref="EmptyProviderNameException">An empty provider name is found</exception>
-            public static bool IsOk(ConnectionStringSettings connectionString)
+            catch
             {
-                return IsOk(new QuickQuery(connectionString));
+                return false;
             }
+        }
 
-            private static bool IsOk(QuickQuery query)
+        /// <summary>
+        /// Issues a SELECT 1 to a RDBMS server thus testing its connection.
+        /// </summary>
+        /// <param name="connectionString">Connection string to use</param>
+        /// <returns>True if the RDBMS server responded with success, false otherwise</returns>
+        /// <exception cref="ArgumentNullException">If connectionStringName is null</exception>
+        /// <exception cref="EmptyConnectionStringException">An empty connection string is found</exception>
+        /// <exception cref="EmptyProviderNameException">An empty provider name is found</exception>
+        public static bool Rdbms(ConnectionStringSettings connectionString)
+        {
+            try
             {
-                try
-                {
-                    return query.SelectSingle<int>("SELECT 1") == 1;
-                }
-                catch
-                {
-                    return false;
-                }
+                return new QuickQuery(connectionString).SelectSingle<int>("SELECT 1") == 1;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

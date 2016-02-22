@@ -14,17 +14,17 @@ Issues tests commands to SMTP, RDBMS and Redis servers.
 
 Issues a [`HELO`] to a SMTP server and checks the [reply code] for a `200` (non standard), `220` or `250`.
 
-[`HELO`]:     https://tools.ietf.org/html/rfc5321#section-3.2
-[reply code]: https://tools.ietf.org/html/rfc5321#section-4.2.3
-
 ```cs
 using ConnectedLibrary;
 
-if (Connected.SMTP.IsOk("example.org", 25))
+if (Connected.Smtp("example.org", 25))
 {
    // Ready to go
 }
 ```
+
+[`HELO`]:     https://tools.ietf.org/html/rfc5321#section-3.2
+[reply code]: https://tools.ietf.org/html/rfc5321#section-4.2.3
 
 ## RDBMS
 
@@ -33,7 +33,7 @@ Issue a `SELECT 1` to a SMTP server and checks if it went OK.
 ```cs
 using ConnectedLibrary;
 
-if (Connected.RDBMS.IsOk("Data Source=.\SQLEXPRESS;Initial Catalog=MyDatabase;Integrated Security=true"))
+if (Connected.Rdbms("Data Source=.\SQLEXPRESS;Initial Catalog=MyDatabase;Integrated Security=true"))
 {
    // Ready to go
 }
@@ -46,7 +46,7 @@ Issue a [`PING`] to a Redis server and checks if it went OK.
 ```cs
 using ConnectedLibrary;
 
-if (Connected.Redis.IsOk("example.org", 6379))
+if (Connected.Redis("example.org", 6379))
 {
    // Ready to go
 }
