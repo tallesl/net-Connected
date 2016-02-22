@@ -43,14 +43,29 @@
         /// <summary>
         /// Issues a HELO to a SMTP server thus testing its connection.
         /// </summary>
+        /// <param name="endpoint">SMTP endpoint</param>
+        /// <returns>True if the SMTP server responded with success, false otherwise.</returns>
+        public static bool Smtp(EndPoint endpoint)
+        {
+            return Smtp(new ConnectedSocket(endpoint));
+        }
+
+        /// <summary>
+        /// Issues a HELO to a SMTP server thus testing its connection.
+        /// </summary>
         /// <param name="host">SMTP server host</param>
         /// <param name="port">SMTP server port</param>
         /// <returns>True if the SMTP server responded with success, false otherwise.</returns>
         public static bool Smtp(string host, int port)
         {
+            return Smtp(new ConnectedSocket(host, port));
+        }
+
+        private static bool Smtp(ConnectedSocket socket)
+        {
             try
             {
-                using (var socket = new ConnectedSocket(host, port))
+                using (socket)
                 {
                     // getting local hostname
                     var localhost = Dns.GetHostName();
