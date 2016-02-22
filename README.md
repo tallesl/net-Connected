@@ -5,9 +5,9 @@
 
 Issues tests commands to SMTP, RDBMS and Redis servers.
 
-[build]:     https://ci.appveyor.com/project/TallesL/Connected
-[build-img]: https://ci.appveyor.com/api/projects/status/github/tallesl/Connected?svg=true
-[nuget]:     http://badge.fury.io/nu/Connected
+[build]:     https://ci.appveyor.com/project/TallesL/net-connected
+[build-img]: https://ci.appveyor.com/api/projects/status/github/tallesl/net-connected?svg=true
+[nuget]:     https://www.nuget.org/packages/Connected
 [nuget-img]: https://badge.fury.io/nu/Connected.svg
 
 ## SMTP
