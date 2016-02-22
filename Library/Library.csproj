@@ -33,9 +33,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RDBMS.cs" />
+    <Compile Include="Rdbms.cs" />
     <Compile Include="Redis.cs" />
-    <Compile Include="SMTP.cs" />
+    <Compile Include="Smtp.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="ConnectionString, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
