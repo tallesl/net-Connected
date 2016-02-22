@@ -1,7 +1,6 @@
 ﻿namespace ConnectedLibrary
 {
-    using ConnectionStringReading.Exceptions;
-    using QckQuery;
+    using QueryLibrary;
     using System;
     using System.Configuration;
 
@@ -25,7 +24,7 @@
         {
             try
             {
-                return new QuickQuery(connectionStringName).SelectSingle<int>("SELECT 1") == 1;
+                return new Query(connectionStringName).SelectSingle<int>("SELECT 1") == 1;
             }
             catch
             {
@@ -45,7 +44,7 @@
         {
             try
             {
-                return new QuickQuery(connectionString).SelectSingle<int>("SELECT 1") == 1;
+                return new Query(connectionString).SelectSingle<int>("SELECT 1") == 1;
             }
             catch
             {

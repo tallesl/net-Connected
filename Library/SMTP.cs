@@ -1,6 +1,6 @@
 ﻿namespace ConnectedLibrary
 {
-    using SocketThat;
+    using SocketLibrary;
     using System;
     using System.Collections.Generic;
     using System.Configuration;

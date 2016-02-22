@@ -38,40 +38,32 @@
     <Compile Include="SMTP.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ConnectionStringReader, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ConnectionStringReader.1.0.0\lib\ConnectionStringReader.dll</HintPath>
+    <Reference Include="ConnectionString, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ConnectionString.2.0.0\lib\ConnectionString.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DbCommandFormatter, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DbCommandFormatter.1.0.1\lib\DbCommandFormatter.dll</HintPath>
+    <Reference Include="Dictionary, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dictionary.2.0.0\lib\Dictionary.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NameTree, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NameTree.1.1.0\lib\NameTree.dll</HintPath>
+    <Reference Include="Object, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Object.3.0.0\lib\Object.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="PropertiesHash, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PropertiesHash.1.1.0\lib\PropertiesHash.dll</HintPath>
+    <Reference Include="Query, Version=6.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Query.6.0.1\lib\Query.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="QuickQuery, Version=5.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\QuickQuery.5.3.0\lib\QuickQuery.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="SocketThat, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SocketThat.1.0.0\lib\SocketThat.dll</HintPath>
+    <Reference Include="Socket, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Socket.2.0.0\lib\Socket.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
-    <Reference Include="ToObject, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ToObject.2.0.0\lib\ToObject.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

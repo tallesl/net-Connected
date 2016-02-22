@@ -1,6 +1,6 @@
 ﻿namespace ConnectedLibrary
 {
-    using SocketThat;
+    using SocketLibrary;
     using System.Net.Sockets;
 
     public static partial class Connected
