@@ -1,15 +1,14 @@
-# Connection Tester
+# Connected
 
 [![][build-img]][build]
 [![][nuget-img]][nuget]
 
 Issues tests commands to SMTP, RDBMS and Redis servers.
 
-[build]:     https://ci.appveyor.com/project/TallesL/ConnectionTester
-[build-img]: https://ci.appveyor.com/api/projects/status/github/tallesl/ConnectionTester
-
-[nuget]:     http://badge.fury.io/nu/ConnectionTester
-[nuget-img]: https://badge.fury.io/nu/ConnectionTester.png
+[build]:     https://ci.appveyor.com/project/TallesL/Connected
+[build-img]: https://ci.appveyor.com/api/projects/status/github/tallesl/Connected?svg=true
+[nuget]:     http://badge.fury.io/nu/Connected
+[nuget-img]: https://badge.fury.io/nu/Connected.svg
 
 ## SMTP
 
@@ -19,9 +18,9 @@ Issues a [`HELO`] to a SMTP server and checks the [reply code] for a `200` (non 
 [reply code]: https://tools.ietf.org/html/rfc5321#section-4.2.3
 
 ```cs
-using ConnectionTests;
+using ConnectedLibrary;
 
-if (ConnectionTester.SMTP.IsOk("example.org", 25))
+if (Connected.SMTP.IsOk("example.org", 25))
 {
    // Ready to go
 }
@@ -29,12 +28,12 @@ if (ConnectionTester.SMTP.IsOk("example.org", 25))
 
 ## RDBMS
 
-Issues a `SELECT 1` to a SMTP server and checks if it went OK.
+Issue a `SELECT 1` to a SMTP server and checks if it went OK.
 
 ```cs
-using ConnectionTests;
+using ConnectedLibrary;
 
-if (ConnectionTester.RDBMS.IsOk("Data Source=.\SQLEXPRESS;Initial Catalog=MyDatabase;Integrated Security=true"))
+if (Connected.RDBMS.IsOk("Data Source=.\SQLEXPRESS;Initial Catalog=MyDatabase;Integrated Security=true"))
 {
    // Ready to go
 }
@@ -42,15 +41,15 @@ if (ConnectionTester.RDBMS.IsOk("Data Source=.\SQLEXPRESS;Initial Catalog=MyData
 
 ## Redis
 
-Issues a [`PING`] to a Redis server and checks if it went OK.
-
-[`PING`]: http://redis.io/commands/ping
+Issue a [`PING`] to a Redis server and checks if it went OK.
 
 ```cs
-using ConnectionTests;
+using ConnectedLibrary;
 
-if (ConnectionTester.Redis.IsOk("example.org", 6379))
+if (Connected.Redis.IsOk("example.org", 6379))
 {
    // Ready to go
 }
 ```
+
+[`PING`]: http://redis.io/commands/ping

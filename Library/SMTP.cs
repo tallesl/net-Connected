@@ -1,4 +1,4 @@
-﻿namespace ConnectionTests
+﻿namespace ConnectedLibrary
 {
     using SocketThat;
     using System;
@@ -9,7 +9,7 @@
     using System.Net.Configuration;
     using System.Net.Sockets;
 
-    public static partial class ConnectionTester
+    public static partial class Connected
     {
         /// <summary>
         /// Issues a HELO to a SMTP server thus testing its connection.

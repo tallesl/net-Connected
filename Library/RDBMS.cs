@@ -1,4 +1,4 @@
-﻿namespace ConnectionTests
+﻿namespace ConnectedLibrary
 {
     using ConnectionStringReading.Exceptions;
     using QckQuery;
@@ -8,7 +8,7 @@
     /// <summary>
     /// Issues tests commands to SMTP, RDBMS and Redis servers.
     /// </summary>
-    public static partial class ConnectionTester
+    public static partial class Connected
     {
         /// <summary>
         /// Issues a SELECT 1 to a RDBMS server thus testing its connection.

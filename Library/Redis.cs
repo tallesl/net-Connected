@@ -1,9 +1,9 @@
-﻿namespace ConnectionTests
+﻿namespace ConnectedLibrary
 {
     using SocketThat;
     using System.Net.Sockets;
 
-    public static partial class ConnectionTester
+    public static partial class Connected
     {
         /// <summary>
         /// Issues a PING to a Redis server thus testing its connection.

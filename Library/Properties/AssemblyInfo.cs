@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ConnectionTester")]
+[assembly: AssemblyTitle("Connected")]
 [assembly: AssemblyDescription("Issues tests commands to SMTP, RDBMS and Redis servers.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
