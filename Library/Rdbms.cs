@@ -4,6 +4,7 @@
     using QueryLibrary;
     using System;
     using System.Configuration;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Issues tests commands to SMTP, RDBMS and Redis servers.
@@ -21,11 +22,16 @@
         /// </exception>
         /// <exception cref="EmptyConnectionStringException">An empty connection string is found</exception>
         /// <exception cref="EmptyProviderNameException">An empty provider name is found</exception>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
+            Justification = "That's alright, we're testing if everything is OK.")]
         public static bool Rdbms(string connectionStringName)
         {
             try
             {
-                return new Query(connectionStringName).SelectSingle<int>("SELECT 1") == 1;
+                using (var query = new Query(connectionStringName))
+                {
+                    return query.SelectSingle<int>("SELECT 1") == 1;
+                }
             }
             catch
             {
@@ -41,11 +47,16 @@
         /// <exception cref="ArgumentNullException">If connectionStringName is null</exception>
         /// <exception cref="EmptyConnectionStringException">An empty connection string is found</exception>
         /// <exception cref="EmptyProviderNameException">An empty provider name is found</exception>
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
+            Justification = "That's alright, we're testing if everything is OK.")]
         public static bool Rdbms(ConnectionStringSettings connectionString)
         {
             try
             {
-                return new Query(connectionString).SelectSingle<int>("SELECT 1") == 1;
+                using (var query = new Query(connectionString))
+                {
+                    return query.SelectSingle<int>("SELECT 1") == 1;
+                }
             }
             catch
             {

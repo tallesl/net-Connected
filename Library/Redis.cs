@@ -33,7 +33,10 @@
             if (auth == null)
                 throw new ArgumentNullException("auth");
 
-            return Redis(new ConnectedSocket("localhost", _redisDefaultPort), auth);
+            using (var socket = new ConnectedSocket("localhost", _redisDefaultPort))
+            {
+                return Redis(socket, auth);
+            }
         }
 
         /// <summary>
@@ -47,7 +50,10 @@
             if (endpoint == null)
                 throw new ArgumentNullException("endpoint");
 
-            return Redis(new ConnectedSocket(endpoint), null);
+            using (var socket = new ConnectedSocket(endpoint))
+            {
+                return Redis(socket, null);
+            }
         }
 
         /// <summary>
@@ -62,7 +68,10 @@
             if (host == null)
                 throw new ArgumentNullException("host");
 
-            return Redis(new ConnectedSocket(host, port), null);
+            using (var socket = new ConnectedSocket(host, port))
+            {
+                return Redis(socket, null);
+            }
         }
 
         /// <summary>
@@ -80,7 +89,10 @@
             if (auth == null)
                 throw new ArgumentNullException("auth");
 
-            return Redis(new ConnectedSocket(endpoint), auth);
+            using (var socket = new ConnectedSocket(endpoint))
+            {
+                return Redis(socket, auth);
+            }
         }
 
         /// <summary>
@@ -99,25 +111,25 @@
             if (auth == null)
                 throw new ArgumentNullException("auth");
 
-            return Redis(new ConnectedSocket(host, port), auth);
+            using (var socket = new ConnectedSocket(host, port))
+            {
+                return Redis(socket, auth);
+            }
         }
 
         private static bool Redis(ConnectedSocket socket, string auth)
         {
             try
             {
-                using (socket)
+                if (auth != null)
                 {
-                    if (auth != null)
-                    {
-                        socket.Send("AUTH " + auth + _redisLineTerminator);
-                        if (socket.Receive() != ("+OK" + _redisLineTerminator))
-                            return false;
-                    }
-
-                    socket.Send("PING" + _redisLineTerminator);
-                    return socket.Receive() == ("+PONG" + _redisLineTerminator);
+                    socket.Send("AUTH " + auth + _redisLineTerminator);
+                    if (socket.Receive() != ("+OK" + _redisLineTerminator))
+                        return false;
                 }
+
+                socket.Send("PING" + _redisLineTerminator);
+                return socket.Receive() == ("+PONG" + _redisLineTerminator);
             }
             catch (SocketException)
             {

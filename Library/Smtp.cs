@@ -4,6 +4,8 @@
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.Linq;
     using System.Net;
     using System.Net.Configuration;
@@ -36,8 +38,11 @@
 
             if (cfg == null)
                 throw new ConfigurationErrorsException("There's not SMTP configuration in .config!");
-            else
-                return Smtp(new ConnectedSocket(cfg.Network.Host, cfg.Network.Port));
+
+            using (var socket = new ConnectedSocket(cfg.Network.Host, cfg.Network.Port))
+            {
+                return Smtp(socket);
+            }
         }
 
         /// <summary>
@@ -51,7 +56,10 @@
             if (endpoint == null)
                 throw new ArgumentNullException("endpoint");
 
-            return Smtp(new ConnectedSocket(endpoint));
+            using (var socket = new ConnectedSocket(endpoint))
+            {
+                return Smtp(socket);
+            }
         }
 
         /// <summary>
@@ -66,33 +74,34 @@
             if (host == null)
                 throw new ArgumentNullException("host");
 
-            return Smtp(new ConnectedSocket(host, port));
+            using (var socket = new ConnectedSocket(host, port))
+            {
+                return Smtp(socket);
+            }
         }
 
         private static bool Smtp(ConnectedSocket socket)
         {
             try
             {
-                using (socket)
-                {
-                    // getting local hostname
-                    var localhost = Dns.GetHostName();
+                // getting local hostname
+                var localhost = Dns.GetHostName();
 
-                    // formatting HELO
-                    var data = string.Format("HELO {0}{1}", localhost, _smtpLineTerminator);
+                // formatting HELO
+                var data = string.Format(
+                    CultureInfo.InvariantCulture, "HELO {0}{1}", localhost, _smtpLineTerminator);
 
-                    // fire in the hole!
-                    socket.Send(data);
+                // fire in the hole!
+                socket.Send(data);
 
-                    // getting an answer
-                    var received = socket.Receive();
+                // getting an answer
+                var received = socket.Receive();
 
-                    // sanitizing
-                    var answers = SanitizeSmtpAnswer(received);
+                // sanitizing
+                var answers = SanitizeSmtpAnswer(received);
 
-                    // checking answer's reply codes and returning it
-                    return answers.Any(a => ValidSmtpReplyCode(a, localhost));
-                }
+                // checking answer's reply codes and returning it
+                return answers.Any(ValidSmtpReplyCode);
             }
             catch (SocketException)
             {
@@ -105,13 +114,14 @@
         {
             return answer
                 .Split(new [] { _smtpLineTerminator }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(l => l.Trim().ToLower());
+                .Select(l => l.Trim().ToUpperInvariant());
         }
 
-        private static bool ValidSmtpReplyCode(string answer, string hostname)
+        private static bool ValidSmtpReplyCode(string answer)
         {
             var answerCode = answer.Split(new[] { ' ' }).First();
-            return _smtpValidReplyCodes.Any(validCode => validCode.ToString() == answerCode);
+            return _smtpValidReplyCodes.Any(
+                validCode => validCode.ToString(CultureInfo.InvariantCulture) == answerCode);
         }
     }
 }
