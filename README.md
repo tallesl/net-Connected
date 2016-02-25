@@ -1,3 +1,9 @@
+<p align="center">
+    <a href="#connected">
+        <img alt="logo" src="Assets/logo-200x200.png">
+    </a>
+</p>
+
 # Connected
 
 [![][build-img]][build]
