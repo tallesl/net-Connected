@@ -1,10 +1,8 @@
 ﻿namespace ConnectedLibrary
 {
-    using ConnectionStringLibrary;
-    using QueryLibrary;
     using System;
     using System.Configuration;
-    using System.Diagnostics.CodeAnalysis;
+    using System.Data.Common;
 
     /// <summary>
     /// Issues tests commands to SMTP, RDBMS and Redis servers.
@@ -14,48 +12,37 @@
         /// <summary>
         /// Issues a SELECT 1 to a RDBMS server thus testing its connection.
         /// </summary>
-        /// <param name="connectionStringName">Name of the connection string to use</param>
+        /// <param name="name">Connection string name</param>
         /// <returns>True if the RDBMS server responded with success, false otherwise</returns>
-        /// <exception cref="ArgumentNullException">If connectionStringName is null</exception>
-        /// <exception cref="NoSuchConnectionStringException">
-        /// A connection string with the provided name doesn't exist
-        /// </exception>
-        /// <exception cref="EmptyConnectionStringException">An empty connection string is found</exception>
-        /// <exception cref="EmptyProviderNameException">An empty provider name is found</exception>
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
-            Justification = "That's alright, we're testing if everything is OK.")]
-        public static bool Rdbms(string connectionStringName)
+        public static bool Rdbms(string name)
         {
-            try
-            {
-                using (var query = new Query(connectionStringName))
-                {
-                    return query.SelectSingle<int>("SELECT 1") == 1;
-                }
-            }
-            catch
-            {
-                return false;
-            }
+            if (name == null)
+                throw new ArgumentNullException("name");
+
+            var cs = ConfigurationManager.ConnectionStrings[name];
+            if (cs == null)
+                throw new ConfigurationErrorsException("Couldn't find a \"{0}\" connection string.");
+
+            return Rdbms(cs);
         }
 
         /// <summary>
         /// Issues a SELECT 1 to a RDBMS server thus testing its connection.
         /// </summary>
-        /// <param name="connectionString">Connection string to use</param>
+        /// <param name="cs">Connection string</param>
         /// <returns>True if the RDBMS server responded with success, false otherwise</returns>
-        /// <exception cref="ArgumentNullException">If connectionStringName is null</exception>
-        /// <exception cref="EmptyConnectionStringException">An empty connection string is found</exception>
-        /// <exception cref="EmptyProviderNameException">An empty provider name is found</exception>
-        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
-            Justification = "That's alright, we're testing if everything is OK.")]
-        public static bool Rdbms(ConnectionStringSettings connectionString)
+        public static bool Rdbms(ConnectionStringSettings cs)
         {
+            if (cs == null)
+                throw new ArgumentNullException("cs");
+
             try
             {
-                using (var query = new Query(connectionString))
+                using (var conn = DbProviderFactories.GetFactory(cs.ProviderName).CreateConnection())
                 {
-                    return query.SelectSingle<int>("SELECT 1") == 1;
+                    conn.ConnectionString = cs.ConnectionString;
+                    conn.Open();
+                    return true;
                 }
             }
             catch

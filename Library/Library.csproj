@@ -40,35 +40,12 @@
     <Compile Include="Smtp.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ConnectionString, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ConnectionString.2.0.0\lib\ConnectionString.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Dictionary, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dictionary.2.0.0\lib\Dictionary.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Object, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Object.3.0.0\lib\Object.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Query, Version=6.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Query.6.0.1\lib\Query.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Socket, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Socket.2.0.0\lib\Socket.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,9 +1,10 @@
 ﻿namespace ConnectedLibrary
 {
-    using SocketLibrary;
     using System;
+    using System.Globalization;
     using System.Net;
     using System.Net.Sockets;
+    using System.Text;
 
     public static partial class Connected
     {
@@ -15,10 +16,10 @@
         /// Issues a PING to a Redis server thus testing its connection.
         /// Assumes localhost as host and 6379 as port.
         /// </summary>
-        /// <returns>True if the Redis server responded with success, false otherwise.</returns>
+        /// <returns>True if the Redis server responded with success, false otherwise</returns>
         public static bool Redis()
         {
-            return Redis("localhost", _redisDefaultPort);
+            return _Redis(new IPEndPoint(IPAddress.Loopback, _redisDefaultPort), null);
         }
 
         /// <summary>
@@ -26,61 +27,48 @@
         /// Assumes localhost as host and 6379 as port.
         /// </summary>
         /// <param name="auth">Redis password</param>
-        /// <returns>True if the Redis server responded with success, false otherwise.</returns>
-        /// <exception cref="ArgumentNullException">If the given auth is null</exception>
+        /// <returns>True if the Redis server responded with success, false otherwise</returns>
         public static bool Redis(string auth)
         {
             if (auth == null)
                 throw new ArgumentNullException("auth");
 
-            using (var socket = new ConnectedSocket("localhost", _redisDefaultPort))
-            {
-                return Redis(socket, auth);
-            }
+            return _Redis(new IPEndPoint(IPAddress.Loopback, _redisDefaultPort), auth);
         }
 
         /// <summary>
         /// Issues a PING to a Redis server thus testing its connection.
         /// </summary>
-        /// <param name="endpoint">Redis endpoint</param>
-        /// <returns>True if the Redis server responded with success, false otherwise.</returns>
-        /// <exception cref="ArgumentNullException">If the given endpoint is null</exception>
+        /// <param name="endpoint">Server endpoint</param>
+        /// <returns>True if the Redis server responded with success, false otherwise</returns>
         public static bool Redis(EndPoint endpoint)
         {
             if (endpoint == null)
                 throw new ArgumentNullException("endpoint");
 
-            using (var socket = new ConnectedSocket(endpoint))
-            {
-                return Redis(socket, null);
-            }
+            return _Redis(endpoint, null);
         }
 
         /// <summary>
         /// Issues a PING to a Redis server thus testing its connection.
         /// </summary>
-        /// <param name="host">Redis server host</param>
-        /// <param name="port">Redis server port</param>
+        /// <param name="host">Server host</param>
+        /// <param name="port">Server port</param>
         /// <returns>True if the Redis server responded with success, false otherwise.</returns>
-        /// <exception cref="ArgumentNullException">If the given host is null</exception>
         public static bool Redis(string host, int port)
         {
             if (host == null)
                 throw new ArgumentNullException("host");
 
-            using (var socket = new ConnectedSocket(host, port))
-            {
-                return Redis(socket, null);
-            }
+            return _Redis(new IPEndPoint(IPAddress.Parse(host), port), null);
         }
 
         /// <summary>
         /// Issues a PING to a Redis server thus testing its connection.
         /// </summary>
-        /// <param name="endpoint">Redis endpoint</param>
+        /// <param name="endpoint">Server endpoint</param>
         /// <param name="auth">Redis password</param>
         /// <returns>True if the Redis server responded with success, false otherwise.</returns>
-        /// <exception cref="ArgumentNullException">If the given endpoint or auth is null</exception>
         public static bool Redis(EndPoint endpoint, string auth)
         {
             if (endpoint == null)
@@ -89,20 +77,16 @@
             if (auth == null)
                 throw new ArgumentNullException("auth");
 
-            using (var socket = new ConnectedSocket(endpoint))
-            {
-                return Redis(socket, auth);
-            }
+            return _Redis(endpoint, auth);
         }
 
         /// <summary>
         /// Issues a PING to a Redis server thus testing its connection.
         /// </summary>
-        /// <param name="host">Redis server host</param>
-        /// <param name="port">Redis server port</param>
+        /// <param name="host">Server host</param>
+        /// <param name="port">Server port</param>
         /// <param name="auth">Redis password</param>
-        /// <returns>True if the Redis server responded with success, false otherwise.</returns>
-        /// <exception cref="ArgumentNullException">If the given host or auth is null</exception>
+        /// <returns>True if the Redis server responded with success, false otherwise</returns>
         public static bool Redis(string host, int port, string auth)
         {
             if (host == null)
@@ -111,27 +95,40 @@
             if (auth == null)
                 throw new ArgumentNullException("auth");
 
-            using (var socket = new ConnectedSocket(host, port))
-            {
-                return Redis(socket, auth);
-            }
+            return _Redis(new IPEndPoint(IPAddress.Parse(host), port), auth);
         }
 
-        private static bool Redis(ConnectedSocket socket, string auth)
+        private static bool _Redis(EndPoint endPoint, string auth)
         {
             try
             {
-                if (auth != null)
+                using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                 {
-                    socket.Send("AUTH " + auth + _redisLineTerminator);
-                    if (socket.Receive() != ("+OK" + _redisLineTerminator))
-                        return false;
-                }
+                    socket.Connect(endPoint);
 
-                socket.Send("PING" + _redisLineTerminator);
-                return socket.Receive() == ("+PONG" + _redisLineTerminator);
+                    var buffer = new byte[1024];
+
+                    if (auth != null)
+                    {
+                        var authCmd = string.Format(CultureInfo.InvariantCulture, "AUTH {0}{1}", auth, _redisLineTerminator);
+
+                        socket.Send(Encoding.UTF8.GetBytes(authCmd));
+                        socket.Receive(buffer);
+
+                        if (Encoding.UTF8.GetString(buffer).TrimEnd('\0') != ("+OK" + _redisLineTerminator))
+                            return false;
+                    }
+
+                    var pingCmd = string.Format(CultureInfo.InvariantCulture, "PING{0}", _redisLineTerminator);
+
+                    socket.Send(Encoding.UTF8.GetBytes(pingCmd));
+                    socket.Receive(buffer);
+
+                    return Encoding.UTF8.GetString(buffer).TrimEnd('\0') ==
+                        string.Format(CultureInfo.InvariantCulture, "+PONG{0}", _redisLineTerminator);
+                }
             }
-            catch (SocketException)
+            catch
             {
                 return false;
             }

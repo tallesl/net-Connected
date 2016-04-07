@@ -1,15 +1,14 @@
 ﻿namespace ConnectedLibrary
 {
-    using SocketLibrary;
     using System;
     using System.Collections.Generic;
     using System.Configuration;
-    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Net;
     using System.Net.Configuration;
     using System.Net.Sockets;
+    using System.Text;
 
     public static partial class Connected
     {
@@ -30,82 +29,58 @@
         /// Issues a HELO to a SMTP server thus testing its connection.
         /// Reads the SMTP server settings (host and port) from &lt;smtp&gt; in config.
         /// </summary>
-        /// <returns>True if the SMTP server responded with success, false otherwise.</returns>
-        /// <exception cref="ConfigurationErrorsException">If there's no SMTP settings in .config</exception>
+        /// <returns>True if the SMTP server responded with success, false otherwise</returns>
         public static bool Smtp()
         {
             var cfg = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
 
             if (cfg == null)
-                throw new ConfigurationErrorsException("There's not SMTP configuration in .config!");
+                throw new ConfigurationErrorsException("There's no SMTP configuration in .config.");
 
-            using (var socket = new ConnectedSocket(cfg.Network.Host, cfg.Network.Port))
-            {
-                return Smtp(socket);
-            }
+            return Smtp(cfg.Network.Host, cfg.Network.Port);
         }
 
         /// <summary>
         /// Issues a HELO to a SMTP server thus testing its connection.
         /// </summary>
-        /// <param name="endpoint">SMTP endpoint</param>
-        /// <returns>True if the SMTP server responded with success, false otherwise.</returns>
-        /// <exception cref="ArgumentNullException">If the given endpoint is null</exception>
-        public static bool Smtp(EndPoint endpoint)
-        {
-            if (endpoint == null)
-                throw new ArgumentNullException("endpoint");
-
-            using (var socket = new ConnectedSocket(endpoint))
-            {
-                return Smtp(socket);
-            }
-        }
-
-        /// <summary>
-        /// Issues a HELO to a SMTP server thus testing its connection.
-        /// </summary>
-        /// <param name="host">SMTP server host</param>
-        /// <param name="port">SMTP server port</param>
-        /// <returns>True if the SMTP server responded with success, false otherwise.</returns>
-        /// <exception cref="ArgumentNullException">If the given host is null</exception>
+        /// <param name="host">Server host</param>
+        /// <param name="port">Server port</param>
+        /// <returns>True if the SMTP server responded with success, false otherwise</returns>
         public static bool Smtp(string host, int port)
         {
             if (host == null)
                 throw new ArgumentNullException("host");
 
-            using (var socket = new ConnectedSocket(host, port))
-            {
-                return Smtp(socket);
-            }
+            return Smtp(new IPEndPoint(IPAddress.Parse(host), port));
         }
 
-        private static bool Smtp(ConnectedSocket socket)
+        /// <summary>
+        /// Issues a HELO to a SMTP server thus testing its connection.
+        /// </summary>
+        /// <param name="endPoint">Server endpoint</param>
+        /// <returns>True if the SMTP server responded with success, false otherwise</returns>
+        public static bool Smtp(EndPoint endPoint)
         {
+            if (endPoint == null)
+                throw new ArgumentNullException("endPoint");
+
             try
             {
-                // getting local hostname
-                var localhost = Dns.GetHostName();
+                using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+                {
+                    socket.Connect(endPoint);
 
-                // formatting HELO
-                var data = string.Format(
-                    CultureInfo.InvariantCulture, "HELO {0}{1}", localhost, _smtpLineTerminator);
+                    var cmd = string.Format(CultureInfo.InvariantCulture, "HELO {0}{1}", Dns.GetHostName(), _smtpLineTerminator);
+                    socket.Send(Encoding.UTF8.GetBytes(cmd));
 
-                // fire in the hole!
-                socket.Send(data);
+                    var received = new byte[1024];
+                    socket.Receive(received);
 
-                // getting an answer
-                var received = socket.Receive();
-
-                // sanitizing
-                var answers = SanitizeSmtpAnswer(received);
-
-                // checking answer's reply codes and returning it
-                return answers.Any(ValidSmtpReplyCode);
+                    return SanitizeSmtpAnswer(Encoding.UTF8.GetString(received)).Any(ValidSmtpReplyCode);
+                }
             }
-            catch (SocketException)
+            catch
             {
-                // something bad happened
                 return false;
             }
         }
@@ -114,14 +89,14 @@
         {
             return answer
                 .Split(new [] { _smtpLineTerminator }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(l => l.Trim().ToUpperInvariant());
+                .Select(x => x.Trim().ToUpperInvariant());
         }
 
         private static bool ValidSmtpReplyCode(string answer)
         {
-            var answerCode = answer.Split(new[] { ' ' }).First();
             return _smtpValidReplyCodes.Any(
-                validCode => validCode.ToString(CultureInfo.InvariantCulture) == answerCode);
+                x => x.ToString(CultureInfo.InvariantCulture) == answer.Split(new[] { ' ' }).First()
+            );
         }
     }
 }
