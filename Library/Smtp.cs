@@ -29,7 +29,7 @@
         /// Issues a HELO to a SMTP server thus testing its connection.
         /// Reads the SMTP server settings (host and port) from &lt;smtp&gt; in config.
         /// </summary>
-        /// <returns>True if the SMTP server responded with success, false otherwise</returns>
+        /// <returns>True if the server responded with success, false otherwise</returns>
         public static bool Smtp()
         {
             var cfg = ConfigurationManager.GetSection("system.net/mailSettings/smtp") as SmtpSection;
@@ -45,7 +45,7 @@
         /// </summary>
         /// <param name="host">Server host</param>
         /// <param name="port">Server port</param>
-        /// <returns>True if the SMTP server responded with success, false otherwise</returns>
+        /// <returns>True if the server responded with success, false otherwise</returns>
         public static bool Smtp(string host, int port)
         {
             if (host == null)
@@ -58,7 +58,7 @@
         /// Issues a HELO to a SMTP server thus testing its connection.
         /// </summary>
         /// <param name="endPoint">Server endpoint</param>
-        /// <returns>True if the SMTP server responded with success, false otherwise</returns>
+        /// <returns>True if the server responded with success, false otherwise</returns>
         public static bool Smtp(EndPoint endPoint)
         {
             if (endPoint == null)

@@ -37,6 +37,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rdbms.cs" />
     <Compile Include="Redis.cs" />
+    <Compile Include="Http.cs" />
     <Compile Include="Smtp.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -16,7 +16,7 @@
         /// Issues a PING to a Redis server thus testing its connection.
         /// Assumes localhost as host and 6379 as port.
         /// </summary>
-        /// <returns>True if the Redis server responded with success, false otherwise</returns>
+        /// <returns>True if the server responded with success, false otherwise</returns>
         public static bool Redis()
         {
             return _Redis(new IPEndPoint(IPAddress.Loopback, _redisDefaultPort), null);
@@ -27,7 +27,7 @@
         /// Assumes localhost as host and 6379 as port.
         /// </summary>
         /// <param name="auth">Redis password</param>
-        /// <returns>True if the Redis server responded with success, false otherwise</returns>
+        /// <returns>True if the server responded with success, false otherwise</returns>
         public static bool Redis(string auth)
         {
             if (auth == null)
@@ -40,7 +40,7 @@
         /// Issues a PING to a Redis server thus testing its connection.
         /// </summary>
         /// <param name="endpoint">Server endpoint</param>
-        /// <returns>True if the Redis server responded with success, false otherwise</returns>
+        /// <returns>True if the server responded with success, false otherwise</returns>
         public static bool Redis(EndPoint endpoint)
         {
             if (endpoint == null)
@@ -54,7 +54,7 @@
         /// </summary>
         /// <param name="host">Server host</param>
         /// <param name="port">Server port</param>
-        /// <returns>True if the Redis server responded with success, false otherwise.</returns>
+        /// <returns>True if the server responded with success, false otherwise</returns>
         public static bool Redis(string host, int port)
         {
             if (host == null)
@@ -68,7 +68,7 @@
         /// </summary>
         /// <param name="endpoint">Server endpoint</param>
         /// <param name="auth">Redis password</param>
-        /// <returns>True if the Redis server responded with success, false otherwise.</returns>
+        /// <returns>True if the server responded with success, false otherwise</returns>
         public static bool Redis(EndPoint endpoint, string auth)
         {
             if (endpoint == null)
@@ -86,7 +86,7 @@
         /// <param name="host">Server host</param>
         /// <param name="port">Server port</param>
         /// <param name="auth">Redis password</param>
-        /// <returns>True if the Redis server responded with success, false otherwise</returns>
+        /// <returns>True if the server responded with success, false otherwise</returns>
         public static bool Redis(string host, int port, string auth)
         {
             if (host == null)

@@ -13,7 +13,7 @@
         /// Issues a SELECT 1 to a RDBMS server thus testing its connection.
         /// </summary>
         /// <param name="name">Connection string name</param>
-        /// <returns>True if the RDBMS server responded with success, false otherwise</returns>
+        /// <returns>True if the server responded with success, false otherwise</returns>
         public static bool Rdbms(string name)
         {
             if (name == null)
@@ -30,7 +30,7 @@
         /// Issues a SELECT 1 to a RDBMS server thus testing its connection.
         /// </summary>
         /// <param name="cs">Connection string</param>
-        /// <returns>True if the RDBMS server responded with success, false otherwise</returns>
+        /// <returns>True if the server responded with success, false otherwise</returns>
         public static bool Rdbms(ConnectionStringSettings cs)
         {
             if (cs == null)
