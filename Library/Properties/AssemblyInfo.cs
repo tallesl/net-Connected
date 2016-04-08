@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Connected")]
-[assembly: AssemblyDescription("Issues tests commands to SMTP, RDBMS and Redis servers.")]
+[assembly: AssemblyDescription("Issues tests commands to HTTP, RDBMS, Redis and SMTP.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
