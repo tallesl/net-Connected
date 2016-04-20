@@ -5,6 +5,7 @@
     using System.Net;
     using System.Net.Sockets;
     using System.Text;
+    using System.Linq;
 
     public static partial class Connected
     {
@@ -60,7 +61,12 @@
             if (host == null)
                 throw new ArgumentNullException("host");
 
-            return _Redis(new IPEndPoint(IPAddress.Parse(host), port), null);
+            IPAddress ip;
+
+            if (!IPAddress.TryParse(host, out ip))
+                ip = Dns.GetHostAddresses(host).First();
+
+            return _Redis(new IPEndPoint(ip, port), null);
         }
 
         /// <summary>
@@ -95,7 +101,12 @@
             if (auth == null)
                 throw new ArgumentNullException("auth");
 
-            return _Redis(new IPEndPoint(IPAddress.Parse(host), port), auth);
+            IPAddress ip;
+
+            if (!IPAddress.TryParse(host, out ip))
+                ip = Dns.GetHostAddresses(host).First();
+
+            return _Redis(new IPEndPoint(ip, port), auth);
         }
 
         private static bool _Redis(EndPoint endPoint, string auth)

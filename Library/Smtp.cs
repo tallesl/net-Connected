@@ -51,7 +51,12 @@
             if (host == null)
                 throw new ArgumentNullException("host");
 
-            return Smtp(new IPEndPoint(IPAddress.Parse(host), port));
+            IPAddress ip;
+
+            if (!IPAddress.TryParse(host, out ip))
+                ip = Dns.GetHostAddresses(host).First();
+
+            return Smtp(new IPEndPoint(ip, port));
         }
 
         /// <summary>
