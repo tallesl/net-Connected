@@ -75,7 +75,8 @@
                 {
                     socket.Connect(endPoint);
 
-                    var cmd = string.Format(CultureInfo.InvariantCulture, "HELO {0}{1}", Dns.GetHostName(), _smtpLineTerminator);
+                    var cmd = string.Format(
+                        CultureInfo.InvariantCulture, "HELO {0}{1}", Dns.GetHostName(), _smtpLineTerminator);
                     socket.Send(Encoding.UTF8.GetBytes(cmd));
 
                     var received = new byte[1024];

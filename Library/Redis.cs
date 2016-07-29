@@ -2,10 +2,10 @@
 {
     using System;
     using System.Globalization;
+    using System.Linq;
     using System.Net;
     using System.Net.Sockets;
     using System.Text;
-    using System.Linq;
 
     public static partial class Connected
     {
@@ -121,7 +121,8 @@
 
                     if (auth != null)
                     {
-                        var authCmd = string.Format(CultureInfo.InvariantCulture, "AUTH {0}{1}", auth, _redisLineTerminator);
+                        var authCmd = string.Format(
+                            CultureInfo.InvariantCulture, "AUTH {0}{1}", auth, _redisLineTerminator);
 
                         socket.Send(Encoding.UTF8.GetBytes(authCmd));
                         socket.Receive(buffer);

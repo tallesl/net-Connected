@@ -3,6 +3,7 @@
     using System;
     using System.Configuration;
     using System.Data.Common;
+    using System.Globalization;
 
     /// <summary>
     /// Issues tests commands to SMTP, RDBMS and Redis servers.
@@ -21,7 +22,8 @@
 
             var cs = ConfigurationManager.ConnectionStrings[name];
             if (cs == null)
-                throw new ConfigurationErrorsException("Couldn't find a \"{0}\" connection string.");
+                throw new ConfigurationErrorsException(string.Format(CultureInfo.InvariantCulture,
+                    "Couldn't find a \"{0}\" connection string.", name));
 
             return Rdbms(cs);
         }
